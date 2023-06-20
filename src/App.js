@@ -1,129 +1,53 @@
 import "./styles.css";
 import React from "react";
 
+import SignUp from "./SignUp";
+import SignIn from "./SignIn";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 class App extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      name: "",
-      email: "",
-      password: "",
-      list: []
-    };
+
+constructor(){
+  super();
+  this.state = {
+    active:''
   }
+}
 
-  saveToDb = () => {
-    const { name, email, password } = this.state;
-    console.log(name, email, password);
 
-    firebase.firestore().collection("userDirectory").add({
-      name,
-      email,
-      password
-    });
-
+SignIn = () => {
     this.setState({
-      name: "",
-      email: "",
-      password: ""
-    });
-  };
+      active:'SignIn'
+    })
+    console.log('signin')
+    
+}
 
-  updatePassword = (event) => {
+
+SignUp = () => {
     this.setState({
-      password: event.target.value
-    });
-  };
+      active:'SignUp'
+    })
+    console.log('signup')
 
-  updateEmail = (event) => {
-    this.setState({
-      email: event.target.value
-    });
-  };
+}
+  render(){
+    const {active} = this.state
+    return(
+      <div>
+          {/* { active == '' && */}
+           <div><button onClick={this.SignIn}>Sign In</button>
+          <button onClick={this.SignUp}>Sign Up</button></div>
+          {/* } */}
+          
+          {active == 'SignIn' && <SignIn activeState={active}/>}
 
-  updateName = (event) => {
-    this.setState({
-      name: event.target.value
-    });
-  };
-  componentDidMount() {
-    firebase
-      .firestore()
-      .collection("userDirectory")
-      .onSnapshot((snapshot) => {
-        const list = snapshot.docs.map((doc) => {
-          let data = doc.data().name;
-          return data;
-        });
-        this.setState({
-          list
-        });
-      });
-  }
-
-  render() {
-    const { name, email, password, list } = this.state;
-    // console.log(name, email, password);
-
-    return (
-      <div className="App">
-        <form>
-          <label htmlFor="name">Name:</label>
-          <br />
-          <input
-            type="text"
-            id="name"
-            name="name"
-            onChange={this.updateName}
-            value={name}
-          />
-          <br />
-          <label htmlFor="email">Email:</label>
-          <br />
-          <input
-            type="email"
-            id="email"
-            name="email"
-            onChange={this.updateEmail}
-            value={email}
-          />
-          <br />
-          <label htmlFor="password">Password:</label>
-          <br />
-          <input
-            type="password"
-            id="password"
-            name="password"
-            onChange={this.updatePassword}
-            value={password}
-          />
-          <br />
-          <br />
-          <p
-            onClick={this.saveToDb}
-            style={{
-              border: "1px solid black",
-              width: "100px",
-              margin: "auto",
-              cursor: "pointer"
-            }}
-          >
-            Submit
-          </p>
-        </form>
-        <div>
-          <p>List Of User</p>
-          {list.map((l) => {
-            return <p>{l}</p>;
-          })}
-        </div>
+          {active == 'SignUp' && <SignUp activeState={active}/>}
       </div>
-    );
-  }
+    )
+  }  
 }
 
 export default App;
